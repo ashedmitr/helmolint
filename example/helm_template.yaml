@@ -1,0 +1,27 @@
+## example of rendered helm template
+## put it in /tmp/helm or in repo root
+---
+apiVersion: v1
+kind: Ingress
+metadata:
+  name: "good-rest-app"
+  annotations:
+    nginx.ingress.kubernetes.io/server-alias: good-rest-app.k8s.local
+    nginx.ingress.kubernetes.io/server-snippet: |
+      rewrite /bad/ /good permanent;
+  labels:
+    app: good-rest-app
+...
+---
+apiVersion: v1
+kind: Ingress
+metadata:
+  name: "bad-rest-app"
+  annotations:
+    nginx.ingress.kubernetes.io/server-alias: bad-rest-app.k8s.local
+    nginx.ingress.kubernetes.io/server-snippet: |
+      rewrite /foo /bar permanent;
+      wrong nginx conf;
+  labels:
+    app: bad-rest-app
+...

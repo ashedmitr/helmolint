@@ -1,0 +1,13 @@
+name: helmolint
+version: 0.1.0
+
+authors:
+  - Dmitry Ash <ashedmitr@gmail.com>
+
+targets:
+  helmolint:
+    main: src/helmolint.cr
+
+crystal: 1.1.1
+
+license: MIT

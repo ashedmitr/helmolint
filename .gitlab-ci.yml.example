@@ -1,0 +1,46 @@
+---
+image:
+  name: docker:dind
+
+stages:
+  - lint
+  - build_n_push
+
+variables:
+  REGISTRY_URL: registry.local/kube-public
+  REGISTRY_USER: docker_repo_user
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+
+docker:lint:
+  image:
+    name: hadolint/hadolint:latest-alpine
+  script:
+    - find -name Dockerfile -exec hadolint '{}' +
+  stage: lint
+  tags: [ dockerbuild ]
+
+.build:
+  before_script:
+    - test -z "$REGISTRY_PASS" && exit 2
+    - docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL
+  needs:
+    - docker:lint
+  tags: [ dockerbuild ]
+
+helmolint:
+  extends: .build
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+  script:
+    - full_image_name=${REGISTRY_URL}/${image_name}:${image_tag}
+    - docker build -t $full_image_name .
+    - docker push $full_image_name
+  variables:
+    image_name: helmolint
+    image_tag: 0.1.0
+  stage: build_n_push
+...
