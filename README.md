@@ -6,15 +6,20 @@ You can use `server-snippet` annotations in ingress manifests. If an incorrect n
 the annotation will still be loaded into the ingress config.
 But it will not be able to apply due to an error and thus will block the next changes in the entire ingress config.
 
-To check annotations, you can use `helmolint` (helm ingress linter) in the gitlab pipeline.
+To check annotations, you can use `admissionWebhooks` setting in ingress controller:
 
+```yaml
+## nginx configuration
+## Ref: https://github.com/kubernetes/ingress/blob/master/controllers/nginx/configuration.md
+```
+
+If you can't enable `admissionWebhooks`, you can use `helmolint` (helm ingress linter) in the gitlab pipeline.
 
 ## Build image
 
 - run `docker build -t helmolint:0.1.0 .`
 - tag and save image in private registry
 - or use `.gitlab-ci.yml` for auto builds (look `.gitlab-ci.yml.example`)
-
 
 ## Use helm ingress linter in GitLab CI
 
